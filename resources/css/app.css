@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 
-/* ── Toolbar buttons ─────────────────────────────────────── */
+/* ── Toolbar select ──────────────────────────────────────── */
+.toolbar-select {
+    @apply h-7 px-1.5 rounded text-sm text-gray-600 bg-transparent hover:bg-gray-100 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer;
+}
+
 .toolbar-btn {
     @apply h-7 min-w-[28px] px-1.5 rounded text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors flex items-center justify-center;
 }
