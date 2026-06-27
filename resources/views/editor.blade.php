@@ -241,6 +241,46 @@
           </form>
         </div>
       </div>
+
+      {{-- Tags --}}
+      <div>
+        <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Tags</p>
+        <div id="tags-display" class="flex flex-wrap gap-1 mb-2">
+          @forelse($document->tags ?? [] as $tag)
+            <span class="tag-pill px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-xs border border-blue-200 dark:border-blue-700">{{ $tag }}</span>
+          @empty
+            <span class="text-xs text-gray-400 dark:text-gray-500">No tags yet</span>
+          @endforelse
+        </div>
+        <div class="flex gap-1">
+          <input id="tag-input" type="text" placeholder="Add tag…" maxlength="30"
+            class="flex-1 text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"/>
+          <button onclick="addTag()" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors">+</button>
+        </div>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Press Enter or + to add</p>
+      </div>
+
+      {{-- Share --}}
+      <div>
+        <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Share</p>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600 dark:text-gray-400">Public link</span>
+            <button onclick="togglePublic()" id="share-toggle"
+              class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors {{ $document->is_public ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600' }}">
+              <span id="share-toggle-dot" class="inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform {{ $document->is_public ? 'translate-x-4' : 'translate-x-0.5' }}"></span>
+            </button>
+          </div>
+          <div id="share-url-box" class="{{ $document->is_public ? '' : 'hidden' }} space-y-1">
+            <input id="share-url-input" type="text" readonly
+              value="{{ $document->is_public ? route('documents.public', $document->share_token) : '' }}"
+              class="w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 bg-gray-50 dark:bg-gray-800 dark:text-white truncate focus:outline-none"/>
+            <button onclick="copyShareUrl()" class="w-full text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 py-1.5 rounded transition-colors">
+              Copy Link
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     {{-- History tab --}}
@@ -540,5 +580,89 @@ document.addEventListener('keydown', (e) => {
 
 // ── Init ──────────────────────────────────────────────────────────
 updateStats();
+
+// ── Tags ──────────────────────────────────────────────────────────
+let currentTags = @json($document->tags ?? []);
+
+function renderTags() {
+  const display = document.getElementById('tags-display');
+  if (!display) return;
+  if (!currentTags.length) {
+    display.innerHTML = '<span class="text-xs text-gray-400 dark:text-gray-500">No tags yet</span>';
+    return;
+  }
+  display.innerHTML = currentTags.map(tag =>
+    `<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-xs border border-blue-200 dark:border-blue-700 cursor-pointer group" onclick="removeTag('${tag}')">
+      ${tag}
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 opacity-50 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </span>`
+  ).join('');
+}
+
+async function saveTags() {
+  try {
+    await fetch(`/documents/${slug}/tags`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+      body: JSON.stringify({ tags: currentTags }),
+    });
+  } catch { /* silent */ }
+}
+
+function addTag() {
+  const input = document.getElementById('tag-input');
+  const val = input.value.trim().toLowerCase().replace(/[^a-z0-9\-_ ]/g, '');
+  if (!val || currentTags.includes(val) || currentTags.length >= 10) return;
+  currentTags.push(val);
+  renderTags();
+  saveTags();
+  input.value = '';
+}
+
+function removeTag(tag) {
+  currentTags = currentTags.filter(t => t !== tag);
+  renderTags();
+  saveTags();
+}
+
+document.getElementById('tag-input')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+});
+
+renderTags();
+
+// ── Share / Public toggle ─────────────────────────────────────────
+async function togglePublic() {
+  try {
+    const res  = await fetch(`/documents/${slug}/public`, {
+      method: 'PATCH',
+      headers: { 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+    });
+    const data = await res.json();
+    const toggle    = document.getElementById('share-toggle');
+    const dot       = document.getElementById('share-toggle-dot');
+    const urlBox    = document.getElementById('share-url-box');
+    const urlInput  = document.getElementById('share-url-input');
+
+    if (data.is_public) {
+      toggle.classList.replace('bg-gray-300','bg-blue-600');
+      toggle.classList.replace('dark:bg-gray-600','bg-blue-600');
+      dot.classList.replace('translate-x-0.5','translate-x-4');
+      urlInput.value = data.share_url;
+      urlBox.classList.remove('hidden');
+      showToast('🔗 Document is now public');
+    } else {
+      toggle.classList.replace('bg-blue-600','bg-gray-300');
+      dot.classList.replace('translate-x-4','translate-x-0.5');
+      urlBox.classList.add('hidden');
+      showToast('Document is now private', 'info');
+    }
+  } catch { showToast('Failed to update share settings', 'error'); }
+}
+
+function copyShareUrl() {
+  const val = document.getElementById('share-url-input').value;
+  navigator.clipboard.writeText(val).then(() => showToast('🔗 Link copied to clipboard'));
+}
 </script>
 @endpush

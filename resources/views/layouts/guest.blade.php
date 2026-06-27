@@ -6,8 +6,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('title', 'SanvenDocs')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+        if (localStorage.getItem('theme') === 'dark' ||
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
 </head>
-<body class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+<body class="h-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-950 dark:to-gray-900 flex items-center justify-center">
 
     <div class="w-full max-w-md px-4">
         {{-- Logo --}}
@@ -21,7 +27,7 @@
             <p class="text-gray-500 text-sm mt-1">Your personal productivity workspace</p>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-lg px-8 py-8">
+        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg px-8 py-8 border border-gray-100 dark:border-gray-700">
             @yield('content')
         </div>
     </div>

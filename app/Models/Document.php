@@ -15,6 +15,9 @@ class Document extends Model
         'title',
         'content',
         'slug',
+        'share_token',
+        'is_public',
+        'tags',
         'status',
         'folder',
         'starred',
@@ -24,6 +27,8 @@ class Document extends Model
     protected $casts = [
         'last_saved_at' => 'datetime',
         'starred'       => 'boolean',
+        'is_public'     => 'boolean',
+        'tags'          => 'array',
     ];
 
     protected static function booted(): void

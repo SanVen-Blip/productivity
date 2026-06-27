@@ -135,3 +135,47 @@
 #side-panel {
     transition: width 0.2s ease;
 }
+
+/* ── Public doc prose view ───────────────────────────────── */
+.prose-view {
+    line-height: 1.8;
+    font-size: 1rem;
+}
+.prose-view h1 { font-size: 2rem; font-weight: 700; margin: 1.5rem 0 0.75rem; line-height: 1.2; }
+.prose-view h2 { font-size: 1.5rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
+.prose-view h3 { font-size: 1.25rem; font-weight: 600; margin: 1rem 0 0.4rem; }
+.prose-view p  { margin-bottom: 0.75rem; }
+.prose-view ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+.prose-view ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+.prose-view a  { color: #3b82f6; text-decoration: underline; }
+.prose-view blockquote {
+    border-left: 3px solid #e5e7eb;
+    padding-left: 1rem;
+    color: #6b7280;
+    margin: 0.75rem 0;
+    font-style: italic;
+}
+.prose-view table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.9rem; }
+.prose-view th,
+.prose-view td { border: 1px solid #d1d5db; padding: 8px 12px; text-align: left; }
+.prose-view th { background: #f9fafb; font-weight: 600; }
+.prose-view img { max-width: 100%; height: auto; border-radius: 6px; margin: 8px 0; }
+.dark .prose-view blockquote { border-color: #374151; color: #9ca3af; }
+.dark .prose-view th,
+.dark .prose-view td { border-color: #374151; }
+.dark .prose-view th { background: #1f2937; }
+
+/* ── Scrollbar thin ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+.dark ::-webkit-scrollbar-thumb { background: #374151; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+
+/* ── Animations ─────────────────────────────────────────── */
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fade-in-up 0.3s ease forwards; }

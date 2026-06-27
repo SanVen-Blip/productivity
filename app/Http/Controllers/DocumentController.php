@@ -257,4 +257,90 @@ class DocumentController extends Controller
 
         return response()->json(['url' => $url]);
     }
+
+    // ── Public share ───────────────────────────────────────────────
+    public function togglePublic(string $slug)
+    {
+        $document = Auth::user()
+            ->documents()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        if ($document->is_public) {
+            $document->update(['is_public' => false, 'share_token' => null]);
+            return response()->json(['is_public' => false, 'share_url' => null]);
+        }
+
+        $token = \Illuminate\Support\Str::random(32);
+        $document->update(['is_public' => true, 'share_token' => $token]);
+
+        return response()->json([
+            'is_public' => true,
+            'share_url' => route('documents.public', $token),
+        ]);
+    }
+
+    public function publicView(string $token)
+    {
+        $document = Document::where('share_token', $token)
+            ->where('is_public', true)
+            ->firstOrFail();
+
+        return view('public-doc', compact('document'));
+    }
+
+    // ── Tags ───────────────────────────────────────────────────────
+    public function updateTags(Request $request, string $slug)
+    {
+        $document = Auth::user()
+            ->documents()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'tags'   => ['nullable', 'array', 'max:10'],
+            'tags.*' => ['string', 'max:30'],
+        ]);
+
+        $document->update(['tags' => $validated['tags'] ?? []]);
+
+        return response()->json(['tags' => $document->tags]);
+    }
+
+    // ── Templates ─────────────────────────────────────────────────
+    public function storeFromTemplate(Request $request)
+    {
+        $template = $request->input('template', 'blank');
+
+        $templates = [
+            'blank' => ['title' => 'Untitled Document', 'content' => ''],
+            'meeting' => [
+                'title'   => 'Meeting Notes',
+                'content' => '<h1>Meeting Notes</h1><p><strong>Date:</strong> ' . now()->format('F j, Y') . '</p><p><strong>Attendees:</strong> </p><p><strong>Agenda:</strong></p><ul><li>Item 1</li><li>Item 2</li></ul><h2>Discussion</h2><p></p><h2>Action Items</h2><ul><li>[ ] Task 1 — Owner</li><li>[ ] Task 2 — Owner</li></ul><h2>Next Meeting</h2><p></p>',
+            ],
+            'todo' => [
+                'title'   => 'To-Do List',
+                'content' => '<h1>To-Do List</h1><p><strong>Date:</strong> ' . now()->format('F j, Y') . '</p><h2>🔴 High Priority</h2><ul><li>[ ] Task</li></ul><h2>🟡 Medium Priority</h2><ul><li>[ ] Task</li></ul><h2>🟢 Low Priority</h2><ul><li>[ ] Task</li></ul>',
+            ],
+            'project' => [
+                'title'   => 'Project Brief',
+                'content' => '<h1>Project Brief</h1><h2>Overview</h2><p>Describe the project in 2-3 sentences.</p><h2>Goals</h2><ul><li>Goal 1</li><li>Goal 2</li></ul><h2>Scope</h2><p>What is in scope? What is out of scope?</p><h2>Timeline</h2><p><strong>Start:</strong> &nbsp; &nbsp;<strong>End:</strong></p><h2>Team</h2><ul><li>Role — Name</li></ul><h2>Success Metrics</h2><ul><li>Metric 1</li></ul>',
+            ],
+            'notes' => [
+                'title'   => 'Quick Notes',
+                'content' => '<h1>Quick Notes</h1><p>' . now()->format('F j, Y') . '</p><p></p>',
+            ],
+        ];
+
+        $t = $templates[$template] ?? $templates['blank'];
+
+        $document = Auth::user()->documents()->create([
+            'title'   => $t['title'],
+            'content' => $t['content'],
+            'status'  => 'draft',
+            'folder'  => $request->query('folder'),
+        ]);
+
+        return redirect()->route('documents.edit', $document->slug);
+    }
 }

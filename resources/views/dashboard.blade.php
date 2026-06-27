@@ -9,17 +9,47 @@
 {{-- ── Sidebar ───────────────────────────────────────────────── --}}
 <aside class="w-56 flex-shrink-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col overflow-y-auto hidden md:flex">
     <div class="p-4">
-        {{-- New document --}}
-        <form method="POST" action="{{ route('documents.store', request()->only('folder')) }}">
-            @csrf
-            <button type="submit"
-                class="w-full inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-2 rounded-lg transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-                New Document
-            </button>
-        </form>
+        {{-- New document with template dropdown --}}
+        <div class="relative">
+            <div class="flex rounded-lg overflow-hidden border border-blue-600 shadow-sm">
+                <form method="POST" action="{{ route('documents.store', request()->only('folder')) }}" class="flex-1">
+                    @csrf
+                    <button type="submit"
+                        class="w-full inline-flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-2 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                        New Doc
+                    </button>
+                </form>
+                <button onclick="document.getElementById('template-picker').classList.toggle('hidden')"
+                    class="bg-blue-700 hover:bg-blue-800 text-white px-2 py-2 transition-colors border-l border-blue-500" title="Choose template">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+            </div>
+
+            {{-- Template picker dropdown --}}
+            <div id="template-picker" class="hidden absolute left-0 top-full mt-1 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg py-1 z-20">
+                <p class="px-3 py-1.5 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Templates</p>
+                @foreach([
+                    ['blank',   '📄', 'Blank Document'],
+                    ['meeting', '📋', 'Meeting Notes'],
+                    ['todo',    '✅', 'To-Do List'],
+                    ['project', '🚀', 'Project Brief'],
+                    ['notes',   '⚡', 'Quick Notes'],
+                ] as [$key, $icon, $label])
+                <form method="POST" action="{{ route('documents.from-template') }}">
+                    @csrf
+                    <input type="hidden" name="template" value="{{ $key }}">
+                    @if(request('folder'))<input type="hidden" name="folder" value="{{ request('folder') }}">@endif
+                    <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <span>{{ $icon }}</span>
+                        {{ $label }}
+                    </button>
+                </form>
+                @endforeach
+            </div>
+        </div>
     </div>
 
     <nav class="px-3 pb-4 space-y-0.5 text-sm flex-1">
@@ -347,6 +377,9 @@ function toggleMenu(slug) {
 document.addEventListener('click', (e) => {
     if (!e.target.closest('[id^="menu-"]')) {
         document.querySelectorAll('.doc-menu').forEach(m => m.classList.add('hidden'));
+    }
+    if (!e.target.closest('#template-picker') && !e.target.closest('button[onclick*="template-picker"]')) {
+        document.getElementById('template-picker')?.classList.add('hidden');
     }
 });
 

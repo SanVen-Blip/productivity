@@ -53,7 +53,8 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        // Redirect new users to onboarding
+        return redirect()->route('onboarding');
     }
 
     public function logout(Request $request)
