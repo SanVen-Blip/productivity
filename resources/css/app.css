@@ -91,3 +91,47 @@
     border-color: #374151;
     color: #9ca3af;
 }
+
+/* ── Editor table styles ─────────────────────────────────── */
+#editor-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0;
+    font-size: 0.9rem;
+}
+#editor-content th,
+#editor-content td {
+    border: 1px solid #d1d5db;
+    padding: 8px 12px;
+    text-align: left;
+    min-width: 80px;
+}
+#editor-content th {
+    background: #f9fafb;
+    font-weight: 600;
+}
+.dark #editor-content th,
+.dark #editor-content td {
+    border-color: #374151;
+}
+.dark #editor-content th {
+    background: #1f2937;
+}
+
+/* ── Editor image ────────────────────────────────────────── */
+#editor-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 8px 0;
+    cursor: pointer;
+}
+#editor-content img:hover {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* ── Side panel transition ───────────────────────────────── */
+#side-panel {
+    transition: width 0.2s ease;
+}

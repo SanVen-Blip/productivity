@@ -25,6 +25,13 @@
             <span class="hidden sm:block">SanvenDocs</span>
         </a>
 
+        {{-- Mobile sidebar toggle --}}
+        <button id="mobile-menu-btn" onclick="toggleMobileSidebar()"
+            class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ml-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
         <div class="flex items-center gap-1">
 
             {{-- Dark mode toggle --}}
@@ -95,6 +102,45 @@
     </main>
 
     @stack('scripts')
+
+    {{-- ── Mobile sidebar drawer ────────────────────────────────── --}}
+    <div id="mobile-sidebar-overlay" class="hidden fixed inset-0 bg-black/50 z-40 md:hidden" onclick="toggleMobileSidebar()"></div>
+    <div id="mobile-sidebar" class="hidden fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 z-50 flex flex-col md:hidden transform -translate-x-full transition-transform duration-200">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <span class="font-semibold text-blue-600">SanvenDocs</span>
+            <button onclick="toggleMobileSidebar()" class="text-gray-400 hover:text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <nav class="flex-1 px-3 py-4 space-y-0.5 text-sm overflow-y-auto">
+            <a href="{{ route('dashboard') }}"           class="sidebar-link">📄 All Documents</a>
+            <a href="{{ route('dashboard', ['starred'=>1]) }}" class="sidebar-link">⭐ Starred</a>
+            @auth
+            <div class="pt-3 border-t border-gray-100 dark:border-gray-700 mt-2 space-y-0.5">
+                <a href="{{ route('profile.edit') }}"    class="sidebar-link">👤 Profile Settings</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="sidebar-link w-full text-red-600 dark:text-red-400">🚪 Logout</button>
+                </form>
+            </div>
+            @endauth
+        </nav>
+    </div>
+
+    <script>
+    function toggleMobileSidebar() {
+        const sidebar = document.getElementById('mobile-sidebar');
+        const overlay = document.getElementById('mobile-sidebar-overlay');
+        const isOpen  = !sidebar.classList.contains('hidden');
+        if (isOpen) {
+            sidebar.classList.add('-translate-x-full');
+            setTimeout(() => { sidebar.classList.add('hidden'); overlay.classList.add('hidden'); }, 200);
+        } else {
+            sidebar.classList.remove('hidden'); overlay.classList.remove('hidden');
+            requestAnimationFrame(() => sidebar.classList.remove('-translate-x-full'));
+        }
+    }
+    </script>
 
     <script>
     // ── Dark mode ──────────────────────────────────────────────────

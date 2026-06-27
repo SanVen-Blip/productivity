@@ -24,6 +24,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/documents',                       [DocumentController::class, 'store'])->name('documents.store');
     Route::get('/documents/{slug}/edit',            [DocumentController::class, 'edit'])->name('documents.edit');
     Route::get('/documents/{slug}/export',          [DocumentController::class, 'export'])->name('documents.export');
+    Route::get('/documents/{slug}/versions',        [DocumentController::class, 'versions'])->name('documents.versions');
+    Route::post('/documents/{slug}/versions/{id}/restore', [DocumentController::class, 'restoreVersion'])->name('documents.versions.restore');
+    Route::post('/documents/upload-image',          [DocumentController::class, 'uploadImage'])->name('documents.upload-image');
     Route::patch('/documents/{slug}',               [DocumentController::class, 'update'])->name('documents.update');
     Route::patch('/documents/{slug}/rename',        [DocumentController::class, 'rename'])->name('documents.rename');
     Route::patch('/documents/{slug}/star',          [DocumentController::class, 'toggleStar'])->name('documents.star');

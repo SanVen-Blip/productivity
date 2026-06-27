@@ -39,4 +39,28 @@ class Document extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function versions()
+    {
+        return $this->hasMany(DocumentVersion::class)->orderByDesc('version_number');
+    }
+
+    public function saveVersion(): void
+    {
+        $last = $this->versions()->first();
+        // Skip if content hasn't changed since last version
+        if ($last && $last->content === $this->content && $last->title === $this->title) {
+            return;
+        }
+        $nextNumber = ($last?->version_number ?? 0) + 1;
+        // Keep max 30 versions per document
+        if ($this->versions()->count() >= 30) {
+            $this->versions()->orderBy('version_number')->first()->delete();
+        }
+        $this->versions()->create([
+            'title'          => $this->title,
+            'content'        => $this->content,
+            'version_number' => $nextNumber,
+        ]);
+    }
 }

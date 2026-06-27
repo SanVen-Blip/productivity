@@ -104,6 +104,9 @@ class DocumentController extends Controller
             'last_saved_at' => now(),
         ]);
 
+        // Save version snapshot
+        $document->saveVersion();
+
         return response()->json([
             'saved'         => true,
             'last_saved_at' => $document->fresh()->last_saved_at->diffForHumans(),
@@ -193,5 +196,65 @@ class DocumentController extends Controller
             ->firstOrFail();
 
         return view('export', compact('document'));
+    }
+
+    // ── Version history ────────────────────────────────────────────
+    public function versions(string $slug)
+    {
+        $document = Auth::user()
+            ->documents()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $versions = $document->versions()
+            ->select('id', 'version_number', 'title', 'created_at')
+            ->get()
+            ->map(fn ($v) => [
+                'id'             => $v->id,
+                'version_number' => $v->version_number,
+                'title'          => $v->title,
+                'created_at'     => $v->created_at->diffForHumans(),
+                'created_at_full'=> $v->created_at->format('M j, Y g:i A'),
+            ]);
+
+        return response()->json($versions);
+    }
+
+    public function restoreVersion(string $slug, int $versionId)
+    {
+        $document = Auth::user()
+            ->documents()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $version = $document->versions()->findOrFail($versionId);
+
+        // Save current as a version before overwriting
+        $document->saveVersion();
+
+        $document->update([
+            'title'         => $version->title,
+            'content'       => $version->content,
+            'last_saved_at' => now(),
+        ]);
+
+        return response()->json([
+            'restored' => true,
+            'title'    => $document->title,
+            'content'  => $document->content,
+        ]);
+    }
+
+    // ── Image upload ───────────────────────────────────────────────
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => ['required', 'image', 'max:5120'], // 5MB
+        ]);
+
+        $path = $request->file('image')->store('editor-images', 'public');
+        $url  = asset('storage/' . $path);
+
+        return response()->json(['url' => $url]);
     }
 }
