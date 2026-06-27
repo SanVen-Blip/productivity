@@ -16,11 +16,14 @@ class Document extends Model
         'content',
         'slug',
         'status',
+        'folder',
+        'starred',
         'last_saved_at',
     ];
 
     protected $casts = [
         'last_saved_at' => 'datetime',
+        'starred'       => 'boolean',
     ];
 
     protected static function booted(): void

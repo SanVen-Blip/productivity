@@ -10,9 +10,10 @@ class DocumentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Auth::user()->documents()->latest();
+        $user  = Auth::user();
+        $query = $user->documents();
 
-        // Search / filter
+        // Search
         if ($search = $request->query('q')) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
@@ -20,9 +21,47 @@ class DocumentController extends Controller
             });
         }
 
+        // Filter by folder
+        if ($folder = $request->query('folder')) {
+            $query->where('folder', $folder);
+        }
+
+        // Filter starred
+        if ($request->query('starred')) {
+            $query->where('starred', true);
+        }
+
+        // Sort
+        $sort = $request->query('sort', 'updated_at');
+        $dir  = $request->query('dir', 'desc');
+        $allowedSorts = ['updated_at', 'created_at', 'title'];
+        $sort = in_array($sort, $allowedSorts) ? $sort : 'updated_at';
+        $dir  = $dir === 'asc' ? 'asc' : 'desc';
+
+        // Starred always on top (unless filtering starred)
+        if (!$request->query('starred')) {
+            $query->orderBy('starred', 'desc');
+        }
+        $query->orderBy($sort, $dir);
+
         $documents = $query->get();
 
-        return view('dashboard', compact('documents'));
+        // Folders list for sidebar
+        $folders = $user->documents()
+            ->whereNotNull('folder')
+            ->distinct()
+            ->pluck('folder')
+            ->sort()
+            ->values();
+
+        // Stats
+        $stats = [
+            'total'   => $user->documents()->count(),
+            'starred' => $user->documents()->where('starred', true)->count(),
+            'folders' => $folders->count(),
+        ];
+
+        return view('dashboard', compact('documents', 'folders', 'stats'));
     }
 
     public function store(Request $request)
@@ -31,6 +70,7 @@ class DocumentController extends Controller
             'title'   => 'Untitled Document',
             'content' => '',
             'status'  => 'draft',
+            'folder'  => $request->query('folder'),
         ]);
 
         return redirect()->route('documents.edit', $document->slug);
@@ -87,6 +127,34 @@ class DocumentController extends Controller
         return response()->json(['title' => $document->title]);
     }
 
+    public function toggleStar(string $slug)
+    {
+        $document = Auth::user()
+            ->documents()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $document->update(['starred' => !$document->starred]);
+
+        return response()->json(['starred' => $document->starred]);
+    }
+
+    public function moveFolder(Request $request, string $slug)
+    {
+        $document = Auth::user()
+            ->documents()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'folder' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $document->update(['folder' => $validated['folder'] ?: null]);
+
+        return response()->json(['folder' => $document->folder]);
+    }
+
     public function duplicate(string $slug)
     {
         $original = Auth::user()
@@ -98,6 +166,7 @@ class DocumentController extends Controller
             'title'   => $original->title . ' (Copy)',
             'content' => $original->content,
             'status'  => 'draft',
+            'folder'  => $original->folder,
         ]);
 
         return redirect()->route('documents.edit', $copy->slug)

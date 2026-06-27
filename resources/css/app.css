@@ -1,12 +1,27 @@
 @import 'tailwindcss';
 
-/* ── Toolbar select ──────────────────────────────────────── */
+/* ── Dark mode via class strategy ────────────────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+.toolbar-btn {
+    @apply h-7 min-w-[28px] px-1.5 rounded text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center;
+}
 .toolbar-select {
-    @apply h-7 px-1.5 rounded text-sm text-gray-600 bg-transparent hover:bg-gray-100 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer;
+    @apply h-7 px-1.5 rounded text-sm text-gray-600 dark:text-gray-300 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer;
 }
 
-.toolbar-btn {
-    @apply h-7 min-w-[28px] px-1.5 rounded text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors flex items-center justify-center;
+/* ── Sidebar links ───────────────────────────────────────── */
+.sidebar-link {
+    @apply flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors;
+}
+.sidebar-link.active {
+    @apply bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-medium;
+}
+
+/* ── Dropdown menu items ─────────────────────────────────── */
+.menu-item {
+    @apply flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors;
 }
 
 /* ── Editor placeholder ──────────────────────────────────── */
@@ -17,11 +32,12 @@
     pointer-events: none;
 }
 
-/* ── Prose styles inside editor ─────────────────────────── */
+/* ── Editor prose ────────────────────────────────────────── */
 #editor-content {
-    line-height: 1.75;
+    line-height: 1.8;
+    font-size: 1rem;
+    color: inherit;
 }
-
 #editor-content h1 {
     font-size: 2rem;
     font-weight: 700;
@@ -29,26 +45,49 @@
     margin-top: 1.5rem;
     line-height: 1.2;
 }
-
 #editor-content h2 {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
     margin-top: 1.25rem;
 }
-
+#editor-content h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    margin-top: 1rem;
+}
 #editor-content p {
     margin-bottom: 0.75rem;
 }
-
 #editor-content ul {
     list-style-type: disc;
     padding-left: 1.5rem;
     margin-bottom: 0.75rem;
 }
-
 #editor-content ol {
     list-style-type: decimal;
     padding-left: 1.5rem;
     margin-bottom: 0.75rem;
+}
+#editor-content a {
+    color: #3b82f6;
+    text-decoration: underline;
+}
+#editor-content blockquote {
+    border-left: 3px solid #e5e7eb;
+    padding-left: 1rem;
+    color: #6b7280;
+    margin: 0.75rem 0;
+    font-style: italic;
+}
+
+/* ── Dark editor ─────────────────────────────────────────── */
+.dark #editor-content {
+    background-color: #1f2937;
+    color: #f3f4f6;
+}
+.dark #editor-content blockquote {
+    border-color: #374151;
+    color: #9ca3af;
 }

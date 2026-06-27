@@ -8,7 +8,7 @@
 <div class="flex flex-col h-full" id="editor-app" data-slug="{{ $document->slug }}">
 
     {{-- ── Toolbar ─────────────────────────────────────────────── --}}
-    <div class="bg-white border-b border-gray-200 px-3 py-2 flex flex-wrap items-center gap-1 flex-shrink-0">
+    <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-3 py-2 flex flex-wrap items-center gap-1 flex-shrink-0">
 
         {{-- Back --}}
         <a href="{{ route('dashboard') }}"
@@ -126,13 +126,13 @@
     </div>
 
     {{-- ── Editor body ─────────────────────────────────────────── --}}
-    <div class="flex-1 overflow-y-auto bg-gray-100">
-        <div class="max-w-4xl mx-auto my-8 bg-white shadow-sm rounded-xl min-h-[700px]">
+    <div class="flex-1 overflow-y-auto bg-gray-100 dark:bg-gray-950">
+        <div class="max-w-4xl mx-auto my-8 bg-white dark:bg-gray-900 shadow-sm rounded-xl min-h-[700px]">
             <div
                 id="editor-content"
                 contenteditable="true"
                 spellcheck="true"
-                class="min-h-[700px] p-12 focus:outline-none"
+                class="min-h-[700px] p-12 focus:outline-none dark:text-gray-100"
                 data-placeholder="Start typing your document..."
             >{!! $document->content !!}</div>
         </div>
