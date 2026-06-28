@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RealtimeController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,9 +54,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/{slug}/versions',                        [DocumentController::class, 'versions'])->name('documents.versions');
     Route::post('/documents/{slug}/versions/{id}/restore',          [DocumentController::class, 'restoreVersion'])->name('documents.versions.restore');
 
-    // Real-time presence
+    // Real-time presence (legacy polling)
     Route::post('/documents/{slug}/presence/heartbeat', [PresenceController::class, 'heartbeat'])->name('documents.presence.heartbeat');
     Route::post('/documents/{slug}/presence/leave',     [PresenceController::class, 'leave'])->name('documents.presence.leave');
+
+    // Real-time sync (fast — cache based, 300ms polling)
+    Route::post('/documents/{slug}/rt/push', [RealtimeController::class, 'push'])->name('documents.rt.push');
+    Route::post('/documents/{slug}/rt/pull', [RealtimeController::class, 'pull'])->name('documents.rt.pull');
+    Route::post('/documents/{slug}/rt/leave',[RealtimeController::class, 'leave'])->name('documents.rt.leave');
 
     // Profile
     Route::get('/profile',             [ProfileController::class, 'edit'])->name('profile.edit');

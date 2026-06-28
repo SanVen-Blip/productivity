@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', $document->title)
 
@@ -10,10 +10,10 @@
      data-created="{{ $document->created_at->format('M j, Y') }}"
      data-updated="{{ $document->updated_at->format('M j, Y g:i A') }}">
 
-  {{-- ── Left: editor column ──────────────────────────────── --}}
+  {{-- â”€â”€ Left: editor column â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ --}}
   <div class="flex flex-col flex-1 min-w-0">
 
-    {{-- ── Toolbar ────────────────────────────────────────── --}}
+    {{-- â”€â”€ Toolbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ --}}
     <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-3 py-1.5 flex flex-wrap items-center gap-0.5 flex-shrink-0">
 
       {{-- Back --}}
@@ -89,7 +89,7 @@
       <button onclick="fmtBlock('h1')" class="toolbar-btn text-xs font-semibold">H1</button>
       <button onclick="fmtBlock('h2')" class="toolbar-btn text-xs font-semibold">H2</button>
       <button onclick="fmtBlock('h3')" class="toolbar-btn text-xs font-semibold">H3</button>
-      <button onclick="fmtBlock('p')"  class="toolbar-btn text-xs">¶</button>
+      <button onclick="fmtBlock('p')"  class="toolbar-btn text-xs">Â¶</button>
 
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
@@ -101,7 +101,7 @@
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
       {{-- Lists --}}
-      <button onclick="fmt('insertUnorderedList')" title="Bullet List"   class="toolbar-btn text-xs">• List</button>
+      <button onclick="fmt('insertUnorderedList')" title="Bullet List"   class="toolbar-btn text-xs">â€¢ List</button>
       <button onclick="fmt('insertOrderedList')"   title="Numbered List" class="toolbar-btn text-xs">1. List</button>
 
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
@@ -131,8 +131,8 @@
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
       {{-- Undo/Redo --}}
-      <button onclick="document.execCommand('undo')" title="Undo (Ctrl+Z)" class="toolbar-btn">↩</button>
-      <button onclick="document.execCommand('redo')" title="Redo (Ctrl+Y)" class="toolbar-btn">↪</button>
+      <button onclick="document.execCommand('undo')" title="Undo (Ctrl+Z)" class="toolbar-btn">â†©</button>
+      <button onclick="document.execCommand('redo')" title="Redo (Ctrl+Y)" class="toolbar-btn">â†ª</button>
 
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
@@ -152,7 +152,7 @@
       {{-- Right side: word count + online presence + info + history + save --}}
       <div class="ml-auto flex items-center gap-2">
 
-        {{-- Online users avatars (real-time) — PROMINENT --}}
+        {{-- Online users avatars (real-time) â€” PROMINENT --}}
         <div id="online-avatars" class="flex items-center -space-x-2 mr-1" title="Users editing now">
         </div>
 
@@ -162,7 +162,7 @@
           <span id="collab-badge-text">Live</span>
         </div>
 
-        {{-- Typing indicator — more visible --}}
+        {{-- Typing indicator â€” more visible --}}
         <div id="typing-indicator" class="hidden items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 rounded-full text-xs text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-700">
           <span class="flex gap-0.5">
             <span class="h-1.5 w-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay:0ms"></span>
@@ -210,7 +210,7 @@
       </div>
     </div>
 
-    {{-- ── Find & Replace bar ───────────────────────────────── --}}
+    {{-- â”€â”€ Find & Replace bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ --}}
     <div id="find-replace-bar" class="hidden bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800 px-4 py-2 flex items-center gap-2 flex-shrink-0">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
       <input id="find-input" type="text" placeholder="Find..." class="text-sm border border-yellow-300 dark:border-yellow-700 rounded px-2 py-1 w-36 focus:outline-none focus:ring-2 focus:ring-yellow-400 dark:bg-gray-800 dark:text-white"/>
@@ -224,7 +224,7 @@
       </button>
     </div>
 
-    {{-- ── Editor area ──────────────────────────────────────── --}}
+    {{-- â”€â”€ Editor area â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ --}}
     <div class="flex-1 overflow-y-auto bg-gray-100 dark:bg-gray-950">
       <div class="max-w-4xl mx-auto my-8 bg-white dark:bg-gray-900 shadow-sm rounded-xl min-h-[700px]">
         <div id="editor-content" contenteditable="true" spellcheck="true"
@@ -235,7 +235,7 @@
     </div>
   </div>
 
-  {{-- ── Right: Info / History panel ──────────────────────── --}}
+  {{-- â”€â”€ Right: Info / History panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ --}}
   <div id="side-panel" class="hidden w-72 flex-shrink-0 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
 
     {{-- Panel tabs --}}
@@ -336,7 +336,7 @@
           @endforelse
         </div>
         <div class="flex gap-1">
-          <input id="tag-input" type="text" placeholder="Add tag…" maxlength="30"
+          <input id="tag-input" type="text" placeholder="Add tagâ€¦" maxlength="30"
             class="flex-1 text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"/>
           <button onclick="addTag()" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors">+</button>
         </div>
@@ -372,7 +372,7 @@
         <p class="text-xs text-gray-500 dark:text-gray-400">Versions are saved automatically on each save. Up to 30 versions kept.</p>
       </div>
       <div id="versions-list" class="divide-y divide-gray-100 dark:divide-gray-800">
-        <div class="p-4 text-sm text-gray-400 dark:text-gray-500 text-center">Loading versions…</div>
+        <div class="p-4 text-sm text-gray-400 dark:text-gray-500 text-center">Loading versionsâ€¦</div>
       </div>
     </div>
   </div>
@@ -392,7 +392,7 @@ const wordCountEl= document.getElementById('word-count');
 let saveTimer = null;
 let isDirty   = false;
 
-// ── Format ────────────────────────────────────────────────────────
+// â”€â”€ Format â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function fmt(cmd) { document.execCommand(cmd, false, null); editor.focus(); markDirty(); updateToolbarState(); }
 function fmtBlock(tag) { document.execCommand('formatBlock', false, tag); editor.focus(); markDirty(); }
 function changeFontSize(s) { if (s) { document.execCommand('fontSize', false, s); editor.focus(); markDirty(); } }
@@ -401,7 +401,7 @@ function insertLink() {
   if (url) { document.execCommand('createLink', false, url); editor.focus(); markDirty(); }
 }
 
-// ── Font Family ───────────────────────────────────────────────────
+// â”€â”€ Font Family â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function changeFontFamily(font) {
   if (!font) return;
   document.execCommand('fontName', false, font);
@@ -409,7 +409,7 @@ function changeFontFamily(font) {
   markDirty();
 }
 
-// ── Text Color ────────────────────────────────────────────────────
+// â”€â”€ Text Color â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function changeTextColor(color) {
   document.execCommand('foreColor', false, color);
   document.getElementById('color-indicator').style.backgroundColor = color;
@@ -417,14 +417,14 @@ function changeTextColor(color) {
   markDirty();
 }
 
-// ── Highlight Color ───────────────────────────────────────────────
+// â”€â”€ Highlight Color â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function changeHighlight(color) {
   document.execCommand('hiliteColor', false, color);
   editor.focus();
   markDirty();
 }
 
-// ── Insert Table ─────────────────────────────────────────────────
+// â”€â”€ Insert Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function insertTable() {
   const rows = parseInt(prompt('Rows:', '3') || '3');
   const cols = parseInt(prompt('Columns:', '3') || '3');
@@ -444,7 +444,7 @@ function insertTable() {
   markDirty();
 }
 
-// ── Image upload ──────────────────────────────────────────────────
+// â”€â”€ Image upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function handleImageUpload(input) {
   const file = input.files[0];
   if (!file) return;
@@ -474,7 +474,7 @@ async function handleImageUpload(input) {
   input.value = '';
 }
 
-// ── Toolbar active state ──────────────────────────────────────────
+// â”€â”€ Toolbar active state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updateToolbarState() {
   ['bold','italic','underline'].forEach(cmd => {
     const btn = document.getElementById('btn-' + cmd);
@@ -486,21 +486,21 @@ function updateToolbarState() {
 }
 document.addEventListener('selectionchange', updateToolbarState);
 
-// ── Stats ──────────────────────────────────────────────────────────
+// â”€â”€ Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updateStats() {
   const text  = editor.innerText.trim();
   const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
   const chars = text.length;
   const paras = editor.querySelectorAll('p, h1, h2, h3, li').length;
   const mins  = Math.ceil(words / 200) || 0;
-  wordCountEl.textContent = `${words} words · ${chars} chars`;
+  wordCountEl.textContent = `${words} words Â· ${chars} chars`;
   document.getElementById('stat-words').textContent = words.toLocaleString();
   document.getElementById('stat-chars').textContent = chars.toLocaleString();
   document.getElementById('stat-paras').textContent = paras;
   document.getElementById('stat-read').textContent  = `${mins} min`;
 }
 
-// ── Dirty ──────────────────────────────────────────────────────────
+// â”€â”€ Dirty â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function markDirty() {
   isDirty = true;
   saveStatus.innerHTML = '<span class="text-yellow-500">Unsaved changes</span>';
@@ -511,13 +511,13 @@ function markDirty() {
 editor.addEventListener('input', markDirty);
 titleInput.addEventListener('input', markDirty);
 
-// ── Save ───────────────────────────────────────────────────────────
+// â”€â”€ Save â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function saveDocument() {
   if (!isDirty) return;
   clearTimeout(saveTimer);
   const btn = document.getElementById('save-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
-  saveStatus.innerHTML = '<span class="text-gray-400">Saving…</span>';
+  btn.disabled = true; btn.textContent = 'Savingâ€¦';
+  saveStatus.innerHTML = '<span class="text-gray-400">Savingâ€¦</span>';
   try {
     const res  = await fetch(`/documents/${slug}`, {
       method: 'PATCH',
@@ -532,14 +532,14 @@ async function saveDocument() {
       document.getElementById('info-modified').textContent = new Date().toLocaleString('en-US', {month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
     }
   } catch {
-    saveStatus.innerHTML = '<span class="text-red-500">Save failed — retrying…</span>';
+    saveStatus.innerHTML = '<span class="text-red-500">Save failed â€” retryingâ€¦</span>';
     saveTimer = setTimeout(saveDocument, 5000);
   } finally {
     btn.disabled = false; btn.textContent = 'Save';
   }
 }
 
-// ── Keyboard shortcuts ────────────────────────────────────────────
+// â”€â”€ Keyboard shortcuts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.addEventListener('keydown', (e) => {
   const mod = e.ctrlKey || e.metaKey;
   if (mod && e.key === 's') { e.preventDefault(); saveDocument(); }
@@ -551,7 +551,7 @@ document.addEventListener('keydown', (e) => {
 });
 window.addEventListener('beforeunload', (e) => { if (isDirty) { e.preventDefault(); e.returnValue = ''; } });
 
-// ── Side panel ────────────────────────────────────────────────────
+// â”€â”€ Side panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let activePanelTab = 'info';
 function toggleInfoPanel()    { openSidePanel('info'); }
 function toggleHistoryPanel() { openSidePanel('history'); loadVersions(); }
@@ -578,12 +578,12 @@ function switchTab(tab) {
   if (tab === 'history') loadVersions();
 }
 
-// ── Version history ───────────────────────────────────────────────
+// â”€â”€ Version history â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let versionsLoaded = false;
 async function loadVersions(force = false) {
   if (versionsLoaded && !force) return;
   const list = document.getElementById('versions-list');
-  list.innerHTML = '<div class="p-4 text-sm text-gray-400 text-center">Loading…</div>';
+  list.innerHTML = '<div class="p-4 text-sm text-gray-400 text-center">Loadingâ€¦</div>';
   try {
     const res  = await fetch(`/documents/${slug}/versions`, { headers: { 'Accept': 'application/json' } });
     const data = await res.json();
@@ -595,7 +595,7 @@ async function loadVersions(force = false) {
     list.innerHTML = data.map(v => `
       <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 group">
         <div class="min-w-0">
-          <p class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">v${v.version_number} — ${v.title}</p>
+          <p class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">v${v.version_number} â€” ${v.title}</p>
           <p class="text-xs text-gray-400 dark:text-gray-500" title="${v.created_at_full}">${v.created_at}</p>
         </div>
         <button onclick="restoreVersion(${v.id})"
@@ -624,13 +624,13 @@ async function restoreVersion(versionId) {
       versionsLoaded     = false;
       saveStatus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Restored`;
       updateStats();
-      showToast('Version restored ✓');
+      showToast('Version restored âœ“');
       loadVersions(true);
     }
   } catch { showToast('Failed to restore version', 'error'); }
 }
 
-// ── Find & Replace ────────────────────────────────────────────────
+// â”€â”€ Find & Replace â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let findMatches = [], findIndex = 0;
 function toggleFindReplace() {
   const bar = document.getElementById('find-replace-bar');
@@ -670,7 +670,7 @@ function replaceAll() {
   document.getElementById('find-count').textContent = 'Replaced all';
 }
 
-// ── Toast ──────────────────────────────────────────────────────────
+// â”€â”€ Toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showToast(msg, type = 'success') {
   const c = { success:'bg-green-600', error:'bg-red-600', info:'bg-blue-600' };
   const t = document.createElement('div');
@@ -681,7 +681,7 @@ function showToast(msg, type = 'success') {
   setTimeout(() => { t.classList.add('translate-y-2','opacity-0'); setTimeout(() => t.remove(), 300); }, 3000);
 }
 
-// ── Mobile sidebar toggle ─────────────────────────────────────────
+// â”€â”€ Mobile sidebar toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     document.getElementById('find-replace-bar').classList.add('hidden');
@@ -689,221 +689,81 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// ── Init ──────────────────────────────────────────────────────────
+// â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 updateStats();
 
-// ── REAL-TIME PRESENCE ────────────────────────────────────────────
+// â”€â”€ REAL-TIME COLLABORATION (zero-delay via cache polling 300ms) â”€â”€
 let presenceInterval = null;
-let lastSavedAtServer = '{{ $document->last_saved_at?->toIso8601String() ?? '' }}';
 let isTypingTimeout = null;
 let localIsTyping = false;
+let rtTimestamp = 0;
+let pushDebounce = null;
+let isSyncing = false;
 
-function startPresence() {
-  // First heartbeat immediately
-  sendHeartbeat();
-  // Fast polling: 800ms for near-realtime experience
-  presenceInterval = setInterval(sendHeartbeat, 800);
+// Push content on every keystroke (debounced 200ms)
+function pushChanges() {
+  clearTimeout(pushDebounce);
+  pushDebounce = setTimeout(async () => {
+    try {
+      await fetch(`/documents/${slug}/rt/push`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+        body: JSON.stringify({ content: editor.innerHTML, title: titleInput.value.trim() || 'Untitled Document' }),
+      });
+    } catch {}
+  }, 200);
 }
 
-async function sendHeartbeat() {
+// Pull from server every 300ms
+async function pullChanges() {
+  if (isSyncing) return;
   try {
-    const res = await fetch(`/documents/${slug}/presence/heartbeat`, {
+    const res = await fetch(`/documents/${slug}/rt/pull`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-      body: JSON.stringify({
-        is_typing: localIsTyping,
-        last_saved_at: lastSavedAtServer,
-      }),
+      body: JSON.stringify({ since: rtTimestamp }),
     });
     const data = await res.json();
+    renderOnlineUsers(data.online_users || []);
 
-    // Update online users display
-    renderOnlineUsers(data.online_users);
-
-    // Sync content from other editors — IMMEDIATE
-    if (data.sync) {
-      const serverTime = new Date(data.sync.last_saved_at).getTime();
-      const clientTime = lastSavedAtServer ? new Date(lastSavedAtServer).getTime() : 0;
-      
-      if (serverTime > clientTime) {
-        if (!isDirty) {
-          // No local changes — apply sync silently
-          editor.innerHTML = data.sync.content;
-          titleInput.value = data.sync.title;
-          lastSavedAtServer = data.sync.last_saved_at;
-          saveStatus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> <span class="text-blue-500">Synced</span>`;
-          updateStats();
-          showSyncNotification();
-        } else {
-          // User has local changes — show conflict notification
-          showSyncConflict(data.sync);
-        }
-      }
+    if (data.has_update && !isDirty) {
+      isSyncing = true;
+      editor.innerHTML = data.content;
+      titleInput.value = data.title;
+      rtTimestamp = data.timestamp;
+      saveStatus.innerHTML = `<span class="text-blue-500 text-xs flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Live from ${data.from_user}</span>`;
+      updateStats();
+      isSyncing = false;
+    } else if (data.has_update && isDirty) {
+      saveStatus.innerHTML = `<span class="text-amber-500 text-xs">${data.from_user} editing...</span>`;
+      rtTimestamp = data.timestamp;
     }
-  } catch (err) {
-    // Silently fail — will retry next interval
-  }
+    if (!data.has_update && data.timestamp) rtTimestamp = data.timestamp;
+  } catch {}
 }
 
-function renderOnlineUsers(users) {
-  const avatarContainer = document.getElementById('online-avatars');
-  const presenceList = document.getElementById('presence-list');
-  const typingEl = document.getElementById('typing-indicator');
-  const typingText = document.getElementById('typing-text');
-  const countBadge = document.getElementById('online-count-badge');
-  const collabBadge = document.getElementById('collab-badge');
-  const collabText = document.getElementById('collab-badge-text');
-
-  const otherUsers = users.filter(u => !u.is_self);
-  const allCount = users.length;
-
-  // Collaboration badge — show when others are online
-  if (otherUsers.length > 0) {
-    collabBadge.classList.remove('hidden');
-    collabBadge.classList.add('flex');
-    collabText.textContent = `${otherUsers.length} online`;
-  } else {
-    collabBadge.classList.add('hidden');
-    collabBadge.classList.remove('flex');
-  }
-
-  // Count badge
-  if (allCount > 1) {
-    countBadge.textContent = allCount;
-    countBadge.classList.remove('hidden');
-  } else {
-    countBadge.classList.add('hidden');
-  }
-
-  // Toolbar avatars — show ALL users with colored ring
-  const colors = ['bg-emerald-500','bg-purple-500','bg-pink-500','bg-orange-500','bg-cyan-500','bg-rose-500','bg-amber-500','bg-indigo-500'];
-  const ringColors = ['ring-emerald-300','ring-purple-300','ring-pink-300','ring-orange-300','ring-cyan-300','ring-rose-300','ring-amber-300','ring-indigo-300'];
-
-  avatarContainer.innerHTML = users.slice(0, 6).map((u, i) => {
-    const isTyping = u.is_typing && !u.is_self;
-    const color = u.is_self ? 'bg-blue-600' : colors[i % colors.length];
-    const ring = u.is_self ? 'ring-blue-200' : ringColors[i % ringColors.length];
-    return `
-      <div class="relative" title="${u.name}${isTyping ? ' (typing...)' : ''}">
-        <div class="h-7 w-7 rounded-full ${color} flex items-center justify-center text-white text-[11px] font-bold ring-2 ${ring} dark:ring-gray-800 cursor-default shadow-sm ${isTyping ? 'animate-pulse' : ''}">
-          ${u.initial}
-        </div>
-        <span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full ${isTyping ? 'bg-yellow-400' : 'bg-green-500'} ring-2 ring-white dark:ring-gray-900"></span>
-      </div>`;
-  }).join('') + (users.length > 6 ? `<div class="h-7 w-7 rounded-full bg-gray-500 flex items-center justify-center text-white text-[10px] font-bold ring-2 ring-gray-300 dark:ring-gray-800 shadow-sm">+${users.length - 6}</div>` : '');
-
-  // Typing indicator — show who's typing with names
-  const typingUsers = users.filter(u => u.is_typing && !u.is_self);
-  if (typingUsers.length > 0) {
-    const names = typingUsers.map(u => u.name.split(' ')[0]).join(', ');
-    typingText.textContent = `${names} typing`;
-    typingEl.classList.remove('hidden');
-    typingEl.classList.add('flex');
-  } else {
-    typingEl.classList.add('hidden');
-    typingEl.classList.remove('flex');
-  }
-
-  // Presence panel list — detailed view
-  if (presenceList) {
-    if (users.length === 0) {
-      presenceList.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">No one online</p>';
-    } else {
-      presenceList.innerHTML = users.map((u, i) => {
-        const color = u.is_self ? 'bg-blue-600' : colors[i % colors.length];
-        return `
-        <div class="flex items-center gap-3 py-2 px-2 rounded-lg ${u.is_typing && !u.is_self ? 'bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800' : ''}">
-          <div class="relative flex-shrink-0">
-            <div class="h-9 w-9 rounded-full ${color} flex items-center justify-center text-white text-sm font-bold shadow-sm">
-              ${u.initial}
-            </div>
-            <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full ${u.is_typing ? 'bg-yellow-400 animate-pulse' : 'bg-green-500'} ring-2 ring-white dark:ring-gray-900"></span>
-          </div>
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-              ${u.name}${u.is_self ? ' <span class="text-xs text-blue-500 font-normal">(you)</span>' : ''}
-            </p>
-            <p class="text-xs flex items-center gap-1 ${u.is_typing && !u.is_self ? 'text-blue-500 font-medium' : 'text-gray-400 dark:text-gray-500'}">
-              ${u.is_typing && !u.is_self
-                ? '<span class="flex gap-0.5"><span class="h-1 w-1 bg-blue-500 rounded-full animate-bounce" style="animation-delay:0ms"></span><span class="h-1 w-1 bg-blue-500 rounded-full animate-bounce" style="animation-delay:150ms"></span><span class="h-1 w-1 bg-blue-500 rounded-full animate-bounce" style="animation-delay:300ms"></span></span> typing now'
-                : u.is_self ? '🟢 editing' : '🟢 viewing'}
-            </p>
-          </div>
-          ${u.is_typing && !u.is_self ? '<span class="text-[10px] px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full font-medium">TYPING</span>' : ''}
-        </div>`;
-      }).join('');
-    }
-  }
+function startRealtime() {
+  pullChanges();
+  presenceInterval = setInterval(pullChanges, 300);
 }
 
-// Track typing state
 editor.addEventListener('input', () => {
   localIsTyping = true;
   clearTimeout(isTypingTimeout);
-  isTypingTimeout = setTimeout(() => { localIsTyping = false; }, 1500); // Quick typing timeout
+  isTypingTimeout = setTimeout(() => { localIsTyping = false; }, 2000);
+  pushChanges();
 });
+titleInput.addEventListener('input', pushChanges);
 
-// Notify server on page leave
 window.addEventListener('beforeunload', () => {
-  navigator.sendBeacon(`/documents/${slug}/presence/leave`,
-    new URLSearchParams({ '_token': CSRF })
-  );
+  navigator.sendBeacon(`/documents/${slug}/rt/leave`, new URLSearchParams({ '_token': CSRF }));
 });
 
-// Presence panel toggle
 function togglePresencePanel() { openSidePanel('presence'); }
+startRealtime();
 
-// Start presence system
-startPresence();
-
-// ── Sync notifications ────────────────────────────────────────────
-function showSyncNotification() {
-  const el = document.createElement('div');
-  el.className = 'fixed top-16 right-4 z-50 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-xl shadow-lg animate-fade-in-up';
-  el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Document updated by teammate`;
-  document.body.appendChild(el);
-  setTimeout(() => { el.classList.add('opacity-0', 'translate-y-2'); setTimeout(() => el.remove(), 300); }, 2500);
-}
-
-function showSyncConflict(syncData) {
-  // Show a non-blocking notification with option to accept or keep local
-  const existing = document.getElementById('sync-conflict-bar');
-  if (existing) return; // already showing
-
-  const bar = document.createElement('div');
-  bar.id = 'sync-conflict-bar';
-  bar.className = 'fixed top-16 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3 bg-amber-500 text-white text-sm rounded-xl shadow-xl animate-fade-in-up';
-  bar.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-    <span>Teammate updated this doc</span>
-    <button onclick="acceptSync()" class="px-2 py-1 bg-white text-amber-700 rounded font-medium text-xs hover:bg-amber-50">Accept changes</button>
-    <button onclick="dismissSync()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs hover:bg-amber-700 border border-amber-400">Keep mine</button>
-  `;
-  document.body.appendChild(bar);
-
-  window._pendingSync = syncData;
-}
-
-function acceptSync() {
-  if (window._pendingSync) {
-    editor.innerHTML = window._pendingSync.content;
-    titleInput.value = window._pendingSync.title;
-    lastSavedAtServer = window._pendingSync.last_saved_at;
-    isDirty = false;
-    saveStatus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> <span class="text-blue-500">Synced</span>`;
-    updateStats();
-    window._pendingSync = null;
-  }
-  dismissSync();
-}
-
-function dismissSync() {
-  const bar = document.getElementById('sync-conflict-bar');
-  if (bar) bar.remove();
-  window._pendingSync = null;
-}
-
-// ── Tags ──────────────────────────────────────────────────────────
+// â”€â”€ Tags â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+let currentTags = @json($document->tags ?? []);
 let currentTags = @json($document->tags ?? []);
 
 function renderTags() {
@@ -953,7 +813,7 @@ document.getElementById('tag-input')?.addEventListener('keydown', (e) => {
 
 renderTags();
 
-// ── Share / Public toggle ─────────────────────────────────────────
+// â”€â”€ Share / Public toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function togglePublic() {
   try {
     const res  = await fetch(`/documents/${slug}/public`, {
@@ -972,7 +832,7 @@ async function togglePublic() {
       dot.classList.replace('translate-x-0.5','translate-x-4');
       urlInput.value = data.share_url;
       urlBox.classList.remove('hidden');
-      showToast('🔗 Document is now public');
+      showToast('ðŸ”— Document is now public');
     } else {
       toggle.classList.replace('bg-blue-600','bg-gray-300');
       dot.classList.replace('translate-x-4','translate-x-0.5');
@@ -984,7 +844,7 @@ async function togglePublic() {
 
 function copyShareUrl() {
   const val = document.getElementById('share-url-input').value;
-  navigator.clipboard.writeText(val).then(() => showToast('🔗 Link copied to clipboard'));
+  navigator.clipboard.writeText(val).then(() => showToast('ðŸ”— Link copied to clipboard'));
 }
 </script>
 @endpush
