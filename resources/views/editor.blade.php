@@ -28,15 +28,52 @@
 
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
+      {{-- Font family --}}
+      <select id="font-family-select" onchange="changeFontFamily(this.value)" class="toolbar-select text-xs w-28" title="Font Family">
+        <option value="">Font</option>
+        <option value="Arial, sans-serif">Arial</option>
+        <option value="'Times New Roman', serif">Times New Roman</option>
+        <option value="'Georgia', serif">Georgia</option>
+        <option value="'Courier New', monospace">Courier New</option>
+        <option value="'Verdana', sans-serif">Verdana</option>
+        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+        <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+        <option value="'Impact', sans-serif">Impact</option>
+        <option value="'Lucida Console', monospace">Lucida Console</option>
+        <option value="'Palatino', serif">Palatino</option>
+        <option value="system-ui, sans-serif">System UI</option>
+      </select>
+
       {{-- Font size --}}
       <select id="font-size-select" onchange="changeFontSize(this.value)" class="toolbar-select text-xs">
         <option value="">Size</option>
-        <option value="1">Small</option>
-        <option value="3">Normal</option>
-        <option value="4">Large</option>
-        <option value="5">X-Large</option>
-        <option value="6">2X-Large</option>
+        <option value="1">8px</option>
+        <option value="2">10px</option>
+        <option value="3">12px</option>
+        <option value="4">14px</option>
+        <option value="5">18px</option>
+        <option value="6">24px</option>
+        <option value="7">36px</option>
       </select>
+
+      {{-- Text color --}}
+      <div class="relative">
+        <input type="color" id="text-color-picker" value="#000000" onchange="changeTextColor(this.value)"
+          class="absolute opacity-0 w-0 h-0" />
+        <button onclick="document.getElementById('text-color-picker').click()" title="Text Color" class="toolbar-btn text-xs flex items-center gap-0.5">
+          <span class="font-bold">A</span>
+          <span id="color-indicator" class="h-1 w-4 rounded-sm bg-current block"></span>
+        </button>
+      </div>
+
+      {{-- Highlight color --}}
+      <div class="relative">
+        <input type="color" id="bg-color-picker" value="#FFFF00" onchange="changeHighlight(this.value)"
+          class="absolute opacity-0 w-0 h-0" />
+        <button onclick="document.getElementById('bg-color-picker').click()" title="Highlight Color" class="toolbar-btn text-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12m-4-4v4m-4 0h4"/></svg>
+        </button>
+      </div>
 
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
@@ -115,12 +152,25 @@
       {{-- Right side: word count + online presence + info + history + save --}}
       <div class="ml-auto flex items-center gap-2">
 
-        {{-- Online users avatars (real-time) --}}
-        <div id="online-avatars" class="hidden sm:flex items-center -space-x-1.5 mr-1" title="Users editing now">
+        {{-- Online users avatars (real-time) — PROMINENT --}}
+        <div id="online-avatars" class="flex items-center -space-x-2 mr-1" title="Users editing now">
         </div>
 
-        {{-- Typing indicator --}}
-        <span id="typing-indicator" class="hidden text-xs text-green-500 dark:text-green-400 animate-pulse whitespace-nowrap"></span>
+        {{-- Live collaboration badge --}}
+        <div id="collab-badge" class="hidden items-center gap-1 px-2 py-0.5 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-full text-xs text-green-700 dark:text-green-400 font-medium animate-pulse">
+          <span class="h-2 w-2 bg-green-500 rounded-full inline-block"></span>
+          <span id="collab-badge-text">Live</span>
+        </div>
+
+        {{-- Typing indicator — more visible --}}
+        <div id="typing-indicator" class="hidden items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 rounded-full text-xs text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-700">
+          <span class="flex gap-0.5">
+            <span class="h-1.5 w-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay:0ms"></span>
+            <span class="h-1.5 w-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay:150ms"></span>
+            <span class="h-1.5 w-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay:300ms"></span>
+          </span>
+          <span id="typing-text">typing...</span>
+        </div>
 
         <span id="word-count" class="text-xs text-gray-400 dark:text-gray-500 hidden lg:block">0 words</span>
 
@@ -349,6 +399,29 @@ function changeFontSize(s) { if (s) { document.execCommand('fontSize', false, s)
 function insertLink() {
   const url = prompt('Enter URL:', 'https://');
   if (url) { document.execCommand('createLink', false, url); editor.focus(); markDirty(); }
+}
+
+// ── Font Family ───────────────────────────────────────────────────
+function changeFontFamily(font) {
+  if (!font) return;
+  document.execCommand('fontName', false, font);
+  editor.focus();
+  markDirty();
+}
+
+// ── Text Color ────────────────────────────────────────────────────
+function changeTextColor(color) {
+  document.execCommand('foreColor', false, color);
+  document.getElementById('color-indicator').style.backgroundColor = color;
+  editor.focus();
+  markDirty();
+}
+
+// ── Highlight Color ───────────────────────────────────────────────
+function changeHighlight(color) {
+  document.execCommand('hiliteColor', false, color);
+  editor.focus();
+  markDirty();
 }
 
 // ── Insert Table ─────────────────────────────────────────────────
@@ -664,13 +737,25 @@ function renderOnlineUsers(users) {
   const avatarContainer = document.getElementById('online-avatars');
   const presenceList = document.getElementById('presence-list');
   const typingEl = document.getElementById('typing-indicator');
+  const typingText = document.getElementById('typing-text');
   const countBadge = document.getElementById('online-count-badge');
+  const collabBadge = document.getElementById('collab-badge');
+  const collabText = document.getElementById('collab-badge-text');
 
-  // Count (exclude self)
   const otherUsers = users.filter(u => !u.is_self);
   const allCount = users.length;
 
-  // Badge
+  // Collaboration badge — show when others are online
+  if (otherUsers.length > 0) {
+    collabBadge.classList.remove('hidden');
+    collabBadge.classList.add('flex');
+    collabText.textContent = `${otherUsers.length} online`;
+  } else {
+    collabBadge.classList.add('hidden');
+    collabBadge.classList.remove('flex');
+  }
+
+  // Count badge
   if (allCount > 1) {
     countBadge.textContent = allCount;
     countBadge.classList.remove('hidden');
@@ -678,47 +763,63 @@ function renderOnlineUsers(users) {
     countBadge.classList.add('hidden');
   }
 
-  // Toolbar avatars (show others only)
-  const colors = ['bg-green-500','bg-purple-500','bg-pink-500','bg-orange-500','bg-teal-500','bg-red-500'];
-  avatarContainer.innerHTML = otherUsers.slice(0, 5).map((u, i) => `
-    <div class="h-6 w-6 rounded-full ${colors[i % colors.length]} flex items-center justify-center text-white text-[10px] font-bold ring-2 ring-white dark:ring-gray-900 cursor-default" title="${u.name}${u.is_typing ? ' (typing...)' : ''}">
-      ${u.initial}
-    </div>
-  `).join('') + (otherUsers.length > 5 ? `<div class="h-6 w-6 rounded-full bg-gray-400 flex items-center justify-center text-white text-[10px] font-bold ring-2 ring-white dark:ring-gray-900">+${otherUsers.length - 5}</div>` : '');
+  // Toolbar avatars — show ALL users with colored ring
+  const colors = ['bg-emerald-500','bg-purple-500','bg-pink-500','bg-orange-500','bg-cyan-500','bg-rose-500','bg-amber-500','bg-indigo-500'];
+  const ringColors = ['ring-emerald-300','ring-purple-300','ring-pink-300','ring-orange-300','ring-cyan-300','ring-rose-300','ring-amber-300','ring-indigo-300'];
 
-  // Typing indicator
+  avatarContainer.innerHTML = users.slice(0, 6).map((u, i) => {
+    const isTyping = u.is_typing && !u.is_self;
+    const color = u.is_self ? 'bg-blue-600' : colors[i % colors.length];
+    const ring = u.is_self ? 'ring-blue-200' : ringColors[i % ringColors.length];
+    return `
+      <div class="relative" title="${u.name}${isTyping ? ' (typing...)' : ''}">
+        <div class="h-7 w-7 rounded-full ${color} flex items-center justify-center text-white text-[11px] font-bold ring-2 ${ring} dark:ring-gray-800 cursor-default shadow-sm ${isTyping ? 'animate-pulse' : ''}">
+          ${u.initial}
+        </div>
+        <span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full ${isTyping ? 'bg-yellow-400' : 'bg-green-500'} ring-2 ring-white dark:ring-gray-900"></span>
+      </div>`;
+  }).join('') + (users.length > 6 ? `<div class="h-7 w-7 rounded-full bg-gray-500 flex items-center justify-center text-white text-[10px] font-bold ring-2 ring-gray-300 dark:ring-gray-800 shadow-sm">+${users.length - 6}</div>` : '');
+
+  // Typing indicator — show who's typing with names
   const typingUsers = users.filter(u => u.is_typing && !u.is_self);
   if (typingUsers.length > 0) {
     const names = typingUsers.map(u => u.name.split(' ')[0]).join(', ');
-    typingEl.textContent = `${names} typing...`;
+    typingText.textContent = `${names} typing`;
     typingEl.classList.remove('hidden');
+    typingEl.classList.add('flex');
   } else {
     typingEl.classList.add('hidden');
+    typingEl.classList.remove('flex');
   }
 
-  // Presence panel list
+  // Presence panel list — detailed view
   if (presenceList) {
     if (users.length === 0) {
       presenceList.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">No one online</p>';
     } else {
-      presenceList.innerHTML = users.map(u => `
-        <div class="flex items-center gap-2.5 py-1.5">
-          <div class="relative">
-            <div class="h-8 w-8 rounded-full ${u.is_self ? 'bg-blue-600' : colors[users.indexOf(u) % colors.length]} flex items-center justify-center text-white text-xs font-bold">
+      presenceList.innerHTML = users.map((u, i) => {
+        const color = u.is_self ? 'bg-blue-600' : colors[i % colors.length];
+        return `
+        <div class="flex items-center gap-3 py-2 px-2 rounded-lg ${u.is_typing && !u.is_self ? 'bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800' : ''}">
+          <div class="relative flex-shrink-0">
+            <div class="h-9 w-9 rounded-full ${color} flex items-center justify-center text-white text-sm font-bold shadow-sm">
               ${u.initial}
             </div>
-            <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full ${u.is_typing ? 'bg-green-400 animate-pulse' : 'bg-green-500'} ring-2 ring-white dark:ring-gray-900"></span>
+            <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full ${u.is_typing ? 'bg-yellow-400 animate-pulse' : 'bg-green-500'} ring-2 ring-white dark:ring-gray-900"></span>
           </div>
           <div class="min-w-0 flex-1">
             <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-              ${u.name}${u.is_self ? ' <span class=&quot;text-xs text-gray-400&quot;>(you)</span>' : ''}
+              ${u.name}${u.is_self ? ' <span class="text-xs text-blue-500 font-normal">(you)</span>' : ''}
             </p>
-            <p class="text-xs ${u.is_typing ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}">
-              ${u.is_typing ? '✍️ typing...' : '🟢 viewing'}
+            <p class="text-xs flex items-center gap-1 ${u.is_typing && !u.is_self ? 'text-blue-500 font-medium' : 'text-gray-400 dark:text-gray-500'}">
+              ${u.is_typing && !u.is_self
+                ? '<span class="flex gap-0.5"><span class="h-1 w-1 bg-blue-500 rounded-full animate-bounce" style="animation-delay:0ms"></span><span class="h-1 w-1 bg-blue-500 rounded-full animate-bounce" style="animation-delay:150ms"></span><span class="h-1 w-1 bg-blue-500 rounded-full animate-bounce" style="animation-delay:300ms"></span></span> typing now'
+                : u.is_self ? '🟢 editing' : '🟢 viewing'}
             </p>
           </div>
-        </div>
-      `).join('');
+          ${u.is_typing && !u.is_self ? '<span class="text-[10px] px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full font-medium">TYPING</span>' : ''}
+        </div>`;
+      }).join('');
     }
   }
 }
