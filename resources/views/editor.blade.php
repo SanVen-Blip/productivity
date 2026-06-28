@@ -692,72 +692,53 @@ document.addEventListener('keydown', (e) => {
 // â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 updateStats();
 
-// â”€â”€ REAL-TIME COLLABORATION (zero-delay via cache polling 300ms) â”€â”€
+// ── REAL-TIME COLLABORATION (ultra-fast file-based sync) ──────────
 let presenceInterval = null;
 let isTypingTimeout = null;
 let localIsTyping = false;
 let rtTimestamp = 0;
 let pushDebounce = null;
 let isSyncing = false;
+const RT_URL = '/rt-sync.php';
+const MY_USER_ID = {{ Auth::id() }};
+const MY_USER_NAME = '{{ Auth::user()->name }}';
 
-// Push content on every keystroke (debounced 200ms)
 function pushChanges() {
   clearTimeout(pushDebounce);
   pushDebounce = setTimeout(async () => {
     try {
-      await fetch(`/documents/${slug}/rt/push`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-        body: JSON.stringify({ content: editor.innerHTML, title: titleInput.value.trim() || 'Untitled Document' }),
-      });
+      await fetch(RT_URL, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({action:'push', slug:slug, user_id:MY_USER_ID, user_name:MY_USER_NAME, content:editor.innerHTML, title:titleInput.value.trim()||'Untitled Document'}) });
     } catch {}
-  }, 200);
+  }, 150);
 }
 
-// Pull from server every 300ms
 async function pullChanges() {
   if (isSyncing) return;
   try {
-    const res = await fetch(`/documents/${slug}/rt/pull`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-      body: JSON.stringify({ since: rtTimestamp }),
-    });
+    const res = await fetch(RT_URL, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({action:'pull', slug:slug, user_id:MY_USER_ID, user_name:MY_USER_NAME, since:rtTimestamp}) });
     const data = await res.json();
     renderOnlineUsers(data.online_users || []);
-
     if (data.has_update && !isDirty) {
       isSyncing = true;
       editor.innerHTML = data.content;
       titleInput.value = data.title;
       rtTimestamp = data.timestamp;
-      saveStatus.innerHTML = `<span class="text-blue-500 text-xs flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Live from ${data.from_user}</span>`;
+      saveStatus.innerHTML = '<span class="text-blue-500 text-xs">⚡ Live from ' + data.from_user + '</span>';
       updateStats();
       isSyncing = false;
     } else if (data.has_update && isDirty) {
-      saveStatus.innerHTML = `<span class="text-amber-500 text-xs">${data.from_user} editing...</span>`;
+      saveStatus.innerHTML = '<span class="text-amber-500 text-xs">' + data.from_user + ' editing...</span>';
       rtTimestamp = data.timestamp;
     }
     if (!data.has_update && data.timestamp) rtTimestamp = data.timestamp;
   } catch {}
 }
 
-function startRealtime() {
-  pullChanges();
-  presenceInterval = setInterval(pullChanges, 300);
-}
+function startRealtime() { pullChanges(); presenceInterval = setInterval(pullChanges, 250); }
 
-editor.addEventListener('input', () => {
-  localIsTyping = true;
-  clearTimeout(isTypingTimeout);
-  isTypingTimeout = setTimeout(() => { localIsTyping = false; }, 2000);
-  pushChanges();
-});
+editor.addEventListener('input', () => { localIsTyping = true; clearTimeout(isTypingTimeout); isTypingTimeout = setTimeout(() => { localIsTyping = false; }, 2000); pushChanges(); });
 titleInput.addEventListener('input', pushChanges);
-
-window.addEventListener('beforeunload', () => {
-  navigator.sendBeacon(`/documents/${slug}/rt/leave`, new URLSearchParams({ '_token': CSRF }));
-});
+window.addEventListener('beforeunload', () => { try { navigator.sendBeacon(RT_URL, JSON.stringify({action:'leave',slug:slug,user_id:MY_USER_ID,user_name:MY_USER_NAME})); } catch {} });
 
 function togglePresencePanel() { openSidePanel('presence'); }
 startRealtime();
