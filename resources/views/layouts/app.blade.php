@@ -82,6 +82,10 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
                             My Documents
                         </a>
+                        <a href="{{ route('teams.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            My Teams
+                        </a>
                         <div class="border-t border-gray-100 dark:border-gray-700 my-1"></div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -115,6 +119,7 @@
         <nav class="flex-1 px-3 py-4 space-y-0.5 text-sm overflow-y-auto">
             <a href="{{ route('dashboard') }}"           class="sidebar-link">📄 All Documents</a>
             <a href="{{ route('dashboard', ['starred'=>1]) }}" class="sidebar-link">⭐ Starred</a>
+            <a href="{{ route('teams.index') }}"              class="sidebar-link">👥 My Teams</a>
             @auth
             <div class="pt-3 border-t border-gray-100 dark:border-gray-700 mt-2 space-y-0.5">
                 <a href="{{ route('profile.edit') }}"    class="sidebar-link">👤 Profile Settings</a>

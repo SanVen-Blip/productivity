@@ -12,6 +12,7 @@ class Document extends Model
 
     protected $fillable = [
         'user_id',
+        'team_id',
         'title',
         'content',
         'slug',
@@ -43,6 +44,11 @@ class Document extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
 
     public function versions()

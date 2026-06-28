@@ -8,6 +8,32 @@ use Illuminate\Support\Facades\Auth;
 
 class DocumentController extends Controller
 {
+    /**
+     * Find a document that the user can access (own or via team membership).
+     */
+    private function findAccessibleDocument(string $slug, string $requiredAccess = 'view'): Document
+    {
+        // Try own document first
+        $doc = Document::where('slug', $slug)->firstOrFail();
+
+        // Owner always has access
+        if ($doc->user_id === Auth::id()) {
+            return $doc;
+        }
+
+        // Check team membership
+        if ($doc->team_id) {
+            $team = $doc->team;
+            if ($team && $team->hasMember(Auth::user())) {
+                if ($requiredAccess === 'edit' && !$team->canEdit(Auth::user())) {
+                    abort(403, 'You only have view access in this team.');
+                }
+                return $doc;
+            }
+        }
+
+        abort(403, 'You do not have access to this document.');
+    }
     public function index(Request $request)
     {
         $user  = Auth::user();
@@ -78,20 +104,13 @@ class DocumentController extends Controller
 
     public function edit(string $slug)
     {
-        $document = Auth::user()
-            ->documents()
-            ->where('slug', $slug)
-            ->firstOrFail();
-
+        $document = $this->findAccessibleDocument($slug);
         return view('editor', compact('document'));
     }
 
     public function update(Request $request, string $slug)
     {
-        $document = Auth::user()
-            ->documents()
-            ->where('slug', $slug)
-            ->firstOrFail();
+        $document = $this->findAccessibleDocument($slug, 'edit');
 
         $validated = $request->validate([
             'title'   => ['required', 'string', 'max:255'],

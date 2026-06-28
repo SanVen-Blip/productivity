@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
 // ── Public share view (no auth required) ──────────────────────────
@@ -55,6 +56,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile',             [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile/info',      [ProfileController::class, 'updateInfo'])->name('profile.update-info');
     Route::patch('/profile/password',  [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+
+    // Teams
+    Route::get('/teams',                                [TeamController::class, 'index'])->name('teams.index');
+    Route::post('/teams',                               [TeamController::class, 'store'])->name('teams.store');
+    Route::get('/teams/{slug}',                         [TeamController::class, 'show'])->name('teams.show');
+    Route::get('/teams/{slug}/settings',                [TeamController::class, 'settings'])->name('teams.settings');
+    Route::patch('/teams/{slug}',                       [TeamController::class, 'update'])->name('teams.update');
+    Route::post('/teams/{slug}/invite',                 [TeamController::class, 'invite'])->name('teams.invite');
+    Route::patch('/teams/{slug}/members/{user}/role',   [TeamController::class, 'updateRole'])->name('teams.update-role');
+    Route::delete('/teams/{slug}/members/{user}',       [TeamController::class, 'removeMember'])->name('teams.remove-member');
+    Route::post('/teams/{slug}/leave',                  [TeamController::class, 'leave'])->name('teams.leave');
+    Route::delete('/teams/{slug}',                      [TeamController::class, 'destroy'])->name('teams.destroy');
+    Route::post('/teams/{slug}/documents',              [TeamController::class, 'createDocument'])->name('teams.create-document');
+    Route::post('/teams/{slug}/assign-document',        [TeamController::class, 'assignDocument'])->name('teams.assign-document');
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
