@@ -112,14 +112,29 @@
         Export
       </a>
 
-      {{-- Right side: word count + info + history + save --}}
+      {{-- Right side: word count + online presence + info + history + save --}}
       <div class="ml-auto flex items-center gap-2">
+
+        {{-- Online users avatars (real-time) --}}
+        <div id="online-avatars" class="hidden sm:flex items-center -space-x-1.5 mr-1" title="Users editing now">
+        </div>
+
+        {{-- Typing indicator --}}
+        <span id="typing-indicator" class="hidden text-xs text-green-500 dark:text-green-400 animate-pulse whitespace-nowrap"></span>
+
         <span id="word-count" class="text-xs text-gray-400 dark:text-gray-500 hidden lg:block">0 words</span>
 
         {{-- Doc info panel toggle --}}
         <button onclick="toggleInfoPanel()" title="Document Info" id="btn-info"
           class="toolbar-btn text-xs">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </button>
+
+        {{-- Online presence panel toggle --}}
+        <button onclick="togglePresencePanel()" title="Who's online" id="btn-presence"
+          class="toolbar-btn text-xs flex items-center gap-0.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span id="online-count-badge" class="hidden px-1 py-0 text-[10px] bg-green-500 text-white rounded-full min-w-[14px] text-center leading-tight">0</span>
         </button>
 
         {{-- Version history toggle --}}
@@ -175,17 +190,35 @@
 
     {{-- Panel tabs --}}
     <div class="flex border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+      <button id="tab-presence" onclick="switchTab('presence')"
+        class="flex-1 px-2 py-2.5 text-xs font-medium border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+        Online
+      </button>
       <button id="tab-info" onclick="switchTab('info')"
-        class="flex-1 px-3 py-2.5 text-xs font-medium border-b-2 border-blue-500 text-blue-600 dark:text-blue-400 transition-colors">
+        class="flex-1 px-2 py-2.5 text-xs font-medium border-b-2 border-blue-500 text-blue-600 dark:text-blue-400 transition-colors">
         Info
       </button>
       <button id="tab-history" onclick="switchTab('history')"
-        class="flex-1 px-3 py-2.5 text-xs font-medium border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+        class="flex-1 px-2 py-2.5 text-xs font-medium border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
         History
       </button>
       <button onclick="closeSidePanel()" class="px-3 text-gray-400 hover:text-gray-600">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
+    </div>
+
+    {{-- Presence tab --}}
+    <div id="panel-presence" class="hidden flex-1 overflow-y-auto p-4">
+      <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Currently Online</p>
+      <div id="presence-list" class="space-y-2">
+        <p class="text-sm text-gray-400 dark:text-gray-500 text-center py-4">Loading...</p>
+      </div>
+      <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+        <p class="text-xs text-gray-400 dark:text-gray-500">
+          <span class="inline-block h-2 w-2 rounded-full bg-green-500 mr-1"></span>
+          Real-time presence updates every 2s
+        </p>
+      </div>
     </div>
 
     {{-- Info tab --}}
@@ -421,6 +454,7 @@ async function saveDocument() {
     const data = await res.json();
     if (data.saved) {
       isDirty = false;
+      lastSavedAtServer = new Date().toISOString();
       saveStatus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Saved ${data.last_saved_at}`;
       document.getElementById('info-modified').textContent = new Date().toLocaleString('en-US', {month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
     }
@@ -462,8 +496,12 @@ function switchTab(tab) {
   activePanelTab = tab;
   document.getElementById('panel-info').classList.toggle('hidden', tab !== 'info');
   document.getElementById('panel-history').classList.toggle('hidden', tab !== 'history');
-  document.getElementById('tab-info').className    = `flex-1 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors ${tab==='info'    ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`;
-  document.getElementById('tab-history').className = `flex-1 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors ${tab==='history' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`;
+  document.getElementById('panel-presence').classList.toggle('hidden', tab !== 'presence');
+  const tabs = ['presence','info','history'];
+  tabs.forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    if (el) el.className = `flex-1 px-2 py-2.5 text-xs font-medium border-b-2 transition-colors ${t===tab ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`;
+  });
   if (tab === 'history') loadVersions();
 }
 
@@ -580,6 +618,130 @@ document.addEventListener('keydown', (e) => {
 
 // ── Init ──────────────────────────────────────────────────────────
 updateStats();
+
+// ── REAL-TIME PRESENCE ────────────────────────────────────────────
+let presenceInterval = null;
+let lastSavedAtServer = '{{ $document->last_saved_at?->toIso8601String() ?? '' }}';
+let isTypingTimeout = null;
+let localIsTyping = false;
+
+function startPresence() {
+  // First heartbeat immediately
+  sendHeartbeat();
+  // Then every 2 seconds
+  presenceInterval = setInterval(sendHeartbeat, 2000);
+}
+
+async function sendHeartbeat() {
+  try {
+    const res = await fetch(`/documents/${slug}/presence/heartbeat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+      body: JSON.stringify({
+        is_typing: localIsTyping,
+        last_saved_at: lastSavedAtServer,
+      }),
+    });
+    const data = await res.json();
+
+    // Update online users display
+    renderOnlineUsers(data.online_users);
+
+    // Sync content from other editors
+    if (data.sync && !isDirty) {
+      editor.innerHTML = data.sync.content;
+      titleInput.value = data.sync.title;
+      lastSavedAtServer = data.sync.last_saved_at;
+      saveStatus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Synced from team`;
+      updateStats();
+    }
+  } catch (err) {
+    // Silently fail — will retry next interval
+  }
+}
+
+function renderOnlineUsers(users) {
+  const avatarContainer = document.getElementById('online-avatars');
+  const presenceList = document.getElementById('presence-list');
+  const typingEl = document.getElementById('typing-indicator');
+  const countBadge = document.getElementById('online-count-badge');
+
+  // Count (exclude self)
+  const otherUsers = users.filter(u => !u.is_self);
+  const allCount = users.length;
+
+  // Badge
+  if (allCount > 1) {
+    countBadge.textContent = allCount;
+    countBadge.classList.remove('hidden');
+  } else {
+    countBadge.classList.add('hidden');
+  }
+
+  // Toolbar avatars (show others only)
+  const colors = ['bg-green-500','bg-purple-500','bg-pink-500','bg-orange-500','bg-teal-500','bg-red-500'];
+  avatarContainer.innerHTML = otherUsers.slice(0, 5).map((u, i) => `
+    <div class="h-6 w-6 rounded-full ${colors[i % colors.length]} flex items-center justify-center text-white text-[10px] font-bold ring-2 ring-white dark:ring-gray-900 cursor-default" title="${u.name}${u.is_typing ? ' (typing...)' : ''}">
+      ${u.initial}
+    </div>
+  `).join('') + (otherUsers.length > 5 ? `<div class="h-6 w-6 rounded-full bg-gray-400 flex items-center justify-center text-white text-[10px] font-bold ring-2 ring-white dark:ring-gray-900">+${otherUsers.length - 5}</div>` : '');
+
+  // Typing indicator
+  const typingUsers = users.filter(u => u.is_typing && !u.is_self);
+  if (typingUsers.length > 0) {
+    const names = typingUsers.map(u => u.name.split(' ')[0]).join(', ');
+    typingEl.textContent = `${names} typing...`;
+    typingEl.classList.remove('hidden');
+  } else {
+    typingEl.classList.add('hidden');
+  }
+
+  // Presence panel list
+  if (presenceList) {
+    if (users.length === 0) {
+      presenceList.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">No one online</p>';
+    } else {
+      presenceList.innerHTML = users.map(u => `
+        <div class="flex items-center gap-2.5 py-1.5">
+          <div class="relative">
+            <div class="h-8 w-8 rounded-full ${u.is_self ? 'bg-blue-600' : colors[users.indexOf(u) % colors.length]} flex items-center justify-center text-white text-xs font-bold">
+              ${u.initial}
+            </div>
+            <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full ${u.is_typing ? 'bg-green-400 animate-pulse' : 'bg-green-500'} ring-2 ring-white dark:ring-gray-900"></span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+              ${u.name}${u.is_self ? ' <span class=&quot;text-xs text-gray-400&quot;>(you)</span>' : ''}
+            </p>
+            <p class="text-xs ${u.is_typing ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}">
+              ${u.is_typing ? '✍️ typing...' : '🟢 viewing'}
+            </p>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+// Track typing state
+editor.addEventListener('input', () => {
+  localIsTyping = true;
+  clearTimeout(isTypingTimeout);
+  isTypingTimeout = setTimeout(() => { localIsTyping = false; }, 3000);
+});
+
+// Notify server on page leave
+window.addEventListener('beforeunload', () => {
+  navigator.sendBeacon(`/documents/${slug}/presence/leave`,
+    new URLSearchParams({ '_token': CSRF })
+  );
+});
+
+// Presence panel toggle
+function togglePresencePanel() { openSidePanel('presence'); }
+
+// Start presence system
+startPresence();
 
 // ── Tags ──────────────────────────────────────────────────────────
 let currentTags = @json($document->tags ?? []);
