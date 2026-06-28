@@ -119,39 +119,6 @@ npm run dev
 
 ---
 
-## Project Structure
-
-```
-app/
-  Http/Controllers/
-    AuthController.php        # Login, register, logout
-    DocumentController.php    # Full document CRUD + versions + share + tags
-    ProfileController.php     # Profile & password update
-  Models/
-    Document.php              # Document model with version helper
-    DocumentVersion.php       # Version snapshot model
-    User.php
-
-resources/views/
-  layouts/
-    app.blade.php             # Main layout with navbar, dark mode, mobile drawer
-    guest.blade.php           # Auth layout
-  auth/                       # Login & register forms
-  errors/                     # 403, 404, 419, 500 error pages
-  dashboard.blade.php         # Document grid with sidebar, search, sort
-  editor.blade.php            # Full rich text editor with side panel
-  export.blade.php            # Print-friendly document view
-  public-doc.blade.php        # Public share view (no auth)
-  welcome-onboard.blade.php   # First-time user onboarding
-  profile/edit.blade.php      # Profile settings
-
-database/migrations/
-  ...create_users_table
-  ...create_documents_table
-  ...add_folder_starred_to_documents_table
-  ...create_document_versions_table
-  ...add_public_tags_to_documents_table
-```
 
 ---
 
