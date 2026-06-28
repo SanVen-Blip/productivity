@@ -57,7 +57,7 @@ class PresenceController extends Controller
                 'is_self'   => $u->id === $user->id,
             ]);
 
-        // Check if document was updated by someone else since client's last known save
+        // Check if document was updated by someone else
         $clientVersion = $request->input('last_saved_at');
         $needSync = false;
         $syncContent = null;
@@ -67,16 +67,17 @@ class PresenceController extends Controller
             $clientTime = strtotime($clientVersion);
             $serverTime = $document->last_saved_at->timestamp;
 
-            // If server has a newer version AND it was saved by a different user
+            // If server version is newer, sync content to this client
             if ($serverTime > $clientTime) {
-                // Check if the last saver was a different user (via version history)
-                $lastVersion = $document->versions()->first();
-                if ($lastVersion) {
-                    $needSync = true;
-                    $syncContent = $document->content;
-                    $syncTitle = $document->title;
-                }
+                $needSync = true;
+                $syncContent = $document->content;
+                $syncTitle = $document->title;
             }
+        } elseif (!$clientVersion && $document->last_saved_at) {
+            // Client has never saved but doc has been saved by someone else
+            $needSync = true;
+            $syncContent = $document->content;
+            $syncTitle = $document->title;
         }
 
         return response()->json([

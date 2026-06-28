@@ -505,7 +505,7 @@ function markDirty() {
   isDirty = true;
   saveStatus.innerHTML = '<span class="text-yellow-500">Unsaved changes</span>';
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveDocument, 3000);
+  saveTimer = setTimeout(saveDocument, 1500); // auto-save after 1.5s idle (faster for collab)
   updateStats();
 }
 editor.addEventListener('input', markDirty);
@@ -701,8 +701,8 @@ let localIsTyping = false;
 function startPresence() {
   // First heartbeat immediately
   sendHeartbeat();
-  // Then every 2 seconds
-  presenceInterval = setInterval(sendHeartbeat, 2000);
+  // Fast polling: 800ms for near-realtime experience
+  presenceInterval = setInterval(sendHeartbeat, 800);
 }
 
 async function sendHeartbeat() {
@@ -720,13 +720,25 @@ async function sendHeartbeat() {
     // Update online users display
     renderOnlineUsers(data.online_users);
 
-    // Sync content from other editors
-    if (data.sync && !isDirty) {
-      editor.innerHTML = data.sync.content;
-      titleInput.value = data.sync.title;
-      lastSavedAtServer = data.sync.last_saved_at;
-      saveStatus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Synced from team`;
-      updateStats();
+    // Sync content from other editors — IMMEDIATE
+    if (data.sync) {
+      const serverTime = new Date(data.sync.last_saved_at).getTime();
+      const clientTime = lastSavedAtServer ? new Date(lastSavedAtServer).getTime() : 0;
+      
+      if (serverTime > clientTime) {
+        if (!isDirty) {
+          // No local changes — apply sync silently
+          editor.innerHTML = data.sync.content;
+          titleInput.value = data.sync.title;
+          lastSavedAtServer = data.sync.last_saved_at;
+          saveStatus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> <span class="text-blue-500">Synced</span>`;
+          updateStats();
+          showSyncNotification();
+        } else {
+          // User has local changes — show conflict notification
+          showSyncConflict(data.sync);
+        }
+      }
     }
   } catch (err) {
     // Silently fail — will retry next interval
@@ -828,7 +840,7 @@ function renderOnlineUsers(users) {
 editor.addEventListener('input', () => {
   localIsTyping = true;
   clearTimeout(isTypingTimeout);
-  isTypingTimeout = setTimeout(() => { localIsTyping = false; }, 3000);
+  isTypingTimeout = setTimeout(() => { localIsTyping = false; }, 1500); // Quick typing timeout
 });
 
 // Notify server on page leave
@@ -843,6 +855,53 @@ function togglePresencePanel() { openSidePanel('presence'); }
 
 // Start presence system
 startPresence();
+
+// ── Sync notifications ────────────────────────────────────────────
+function showSyncNotification() {
+  const el = document.createElement('div');
+  el.className = 'fixed top-16 right-4 z-50 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-xl shadow-lg animate-fade-in-up';
+  el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Document updated by teammate`;
+  document.body.appendChild(el);
+  setTimeout(() => { el.classList.add('opacity-0', 'translate-y-2'); setTimeout(() => el.remove(), 300); }, 2500);
+}
+
+function showSyncConflict(syncData) {
+  // Show a non-blocking notification with option to accept or keep local
+  const existing = document.getElementById('sync-conflict-bar');
+  if (existing) return; // already showing
+
+  const bar = document.createElement('div');
+  bar.id = 'sync-conflict-bar';
+  bar.className = 'fixed top-16 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3 bg-amber-500 text-white text-sm rounded-xl shadow-xl animate-fade-in-up';
+  bar.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    <span>Teammate updated this doc</span>
+    <button onclick="acceptSync()" class="px-2 py-1 bg-white text-amber-700 rounded font-medium text-xs hover:bg-amber-50">Accept changes</button>
+    <button onclick="dismissSync()" class="px-2 py-1 bg-amber-600 text-white rounded text-xs hover:bg-amber-700 border border-amber-400">Keep mine</button>
+  `;
+  document.body.appendChild(bar);
+
+  window._pendingSync = syncData;
+}
+
+function acceptSync() {
+  if (window._pendingSync) {
+    editor.innerHTML = window._pendingSync.content;
+    titleInput.value = window._pendingSync.title;
+    lastSavedAtServer = window._pendingSync.last_saved_at;
+    isDirty = false;
+    saveStatus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> <span class="text-blue-500">Synced</span>`;
+    updateStats();
+    window._pendingSync = null;
+  }
+  dismissSync();
+}
+
+function dismissSync() {
+  const bar = document.getElementById('sync-conflict-bar');
+  if (bar) bar.remove();
+  window._pendingSync = null;
+}
 
 // ── Tags ──────────────────────────────────────────────────────────
 let currentTags = @json($document->tags ?? []);
