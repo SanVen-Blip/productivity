@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', $document->title)
 
@@ -762,8 +762,29 @@ window.addEventListener('beforeunload', () => {
 function togglePresencePanel() { openSidePanel('presence'); }
 startRealtime();
 
+// ── renderOnlineUsers ─────────────────────────────────────────────
+function renderOnlineUsers(users) {
+  const avatarContainer = document.getElementById('online-avatars');
+  const presenceList = document.getElementById('presence-list');
+  const typingEl = document.getElementById('typing-indicator');
+  const typingText = document.getElementById('typing-text');
+  const countBadge = document.getElementById('online-count-badge');
+  const collabBadge = document.getElementById('collab-badge');
+  const collabText = document.getElementById('collab-badge-text');
+  if (!avatarContainer) return;
+  const otherUsers = users.filter(u => !u.is_self);
+  const allCount = users.length;
+  if (collabBadge) { if (otherUsers.length > 0) { collabBadge.classList.remove('hidden'); collabBadge.classList.add('flex'); collabText.textContent = otherUsers.length + ' online'; } else { collabBadge.classList.add('hidden'); collabBadge.classList.remove('flex'); } }
+  if (countBadge) { if (allCount > 1) { countBadge.textContent = allCount; countBadge.classList.remove('hidden'); } else { countBadge.classList.add('hidden'); } }
+  const colors = ['bg-emerald-500','bg-purple-500','bg-pink-500','bg-orange-500','bg-cyan-500','bg-rose-500','bg-amber-500','bg-indigo-500'];
+  const ringColors = ['ring-emerald-300','ring-purple-300','ring-pink-300','ring-orange-300','ring-cyan-300','ring-rose-300','ring-amber-300','ring-indigo-300'];
+  avatarContainer.innerHTML = users.slice(0, 6).map((u, i) => { const isTyping = u.is_typing && !u.is_self; const color = u.is_self ? 'bg-blue-600' : colors[i % colors.length]; const ring = u.is_self ? 'ring-blue-200' : ringColors[i % ringColors.length]; return '<div class="relative" title="' + u.name + '"><div class="h-7 w-7 rounded-full ' + color + ' flex items-center justify-center text-white text-[11px] font-bold ring-2 ' + ring + ' dark:ring-gray-800 shadow-sm ' + (isTyping ? 'animate-pulse' : '') + '">' + u.initial + '</div><span class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full ' + (isTyping ? 'bg-yellow-400' : 'bg-green-500') + ' ring-2 ring-white dark:ring-gray-900"></span></div>'; }).join('');
+  const typingUsers = users.filter(u => u.is_typing && !u.is_self);
+  if (typingEl) { if (typingUsers.length > 0) { typingText.textContent = typingUsers.map(u => u.name.split(' ')[0]).join(', ') + ' typing'; typingEl.classList.remove('hidden'); typingEl.classList.add('flex'); } else { typingEl.classList.add('hidden'); typingEl.classList.remove('flex'); } }
+  if (presenceList) { presenceList.innerHTML = users.length === 0 ? '<p class="text-sm text-gray-400 text-center py-4">No one online</p>' : users.map((u, i) => { const color = u.is_self ? 'bg-blue-600' : colors[i % colors.length]; const isT = u.is_typing && !u.is_self; return '<div class="flex items-center gap-3 py-2 px-2 rounded-lg"><div class="h-9 w-9 rounded-full ' + color + ' flex items-center justify-center text-white text-sm font-bold">' + u.initial + '</div><div><p class="text-sm font-medium text-gray-900 dark:text-white">' + u.name + (u.is_self ? ' (you)' : '') + '</p><p class="text-xs ' + (isT ? 'text-blue-500' : 'text-gray-400') + '">' + (isT ? 'typing...' : 'viewing') + '</p></div></div>'; }).join(''); }
+}
+
 // â”€â”€ Tags â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-let currentTags = @json($document->tags ?? []);
 let currentTags = @json($document->tags ?? []);
 
 function renderTags() {
