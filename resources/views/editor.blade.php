@@ -78,18 +78,20 @@
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
       {{-- Text format --}}
-      <button onclick="fmt('bold')"         title="Bold (Ctrl+B)"      class="toolbar-btn font-bold" id="btn-bold">B</button>
-      <button onclick="fmt('italic')"       title="Italic (Ctrl+I)"    class="toolbar-btn italic"    id="btn-italic">I</button>
-      <button onclick="fmt('underline')"    title="Underline (Ctrl+U)" class="toolbar-btn underline" id="btn-underline">U</button>
-      <button onclick="fmt('strikeThrough')" title="Strikethrough"     class="toolbar-btn line-through text-xs">S</button>
+      <button onclick="fmt('bold')"          title="Bold (Ctrl+B)"      class="toolbar-btn font-bold text-sm" id="btn-bold">B</button>
+      <button onclick="fmt('italic')"        title="Italic (Ctrl+I)"    class="toolbar-btn italic text-sm"    id="btn-italic">I</button>
+      <button onclick="fmt('underline')"     title="Underline (Ctrl+U)" class="toolbar-btn underline text-sm" id="btn-underline">U</button>
+      <button onclick="fmt('strikeThrough')" title="Strikethrough"      class="toolbar-btn line-through text-sm">S</button>
 
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
       {{-- Headings --}}
-      <button onclick="fmtBlock('h1')" class="toolbar-btn text-xs font-semibold">H1</button>
-      <button onclick="fmtBlock('h2')" class="toolbar-btn text-xs font-semibold">H2</button>
-      <button onclick="fmtBlock('h3')" class="toolbar-btn text-xs font-semibold">H3</button>
-      <button onclick="fmtBlock('p')"  class="toolbar-btn text-xs">Â¶</button>
+      <button onclick="fmtBlock('h1')" title="Heading 1" class="toolbar-btn text-xs font-bold">H1</button>
+      <button onclick="fmtBlock('h2')" title="Heading 2" class="toolbar-btn text-xs font-bold">H2</button>
+      <button onclick="fmtBlock('h3')" title="Heading 3" class="toolbar-btn text-xs font-bold">H3</button>
+      <button onclick="fmtBlock('p')"  title="Normal text" class="toolbar-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"/></svg>
+      </button>
 
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
@@ -101,8 +103,12 @@
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
       {{-- Lists --}}
-      <button onclick="fmt('insertUnorderedList')" title="Bullet List"   class="toolbar-btn text-xs">â€¢ List</button>
-      <button onclick="fmt('insertOrderedList')"   title="Numbered List" class="toolbar-btn text-xs">1. List</button>
+      <button onclick="fmt('insertUnorderedList')" title="Bullet List" class="toolbar-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/><circle cx="2" cy="6" r="1" fill="currentColor"/><circle cx="2" cy="10" r="1" fill="currentColor"/><circle cx="2" cy="14" r="1" fill="currentColor"/></svg>
+      </button>
+      <button onclick="fmt('insertOrderedList')" title="Numbered List" class="toolbar-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+      </button>
 
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
@@ -131,8 +137,12 @@
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
       {{-- Undo/Redo --}}
-      <button onclick="document.execCommand('undo')" title="Undo (Ctrl+Z)" class="toolbar-btn">â†©</button>
-      <button onclick="document.execCommand('redo')" title="Redo (Ctrl+Y)" class="toolbar-btn">â†ª</button>
+      <button onclick="document.execCommand('undo')" title="Undo (Ctrl+Z)" class="toolbar-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+      </button>
+      <button onclick="document.execCommand('redo')" title="Redo (Ctrl+Y)" class="toolbar-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 10H11a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/></svg>
+      </button>
 
       <div class="h-5 w-px bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
